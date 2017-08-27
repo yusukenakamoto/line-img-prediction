@@ -3,6 +3,7 @@ package com.example.lineimgprediction.service;
 import com.example.lineimgprediction.entity.EinsteinVisionPredictionResponseEntity;
 import com.example.lineimgprediction.entity.EinsteinVisionTokenResponseEntity;
 import com.example.lineimgprediction.properties.EinsteinVisionProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
@@ -27,6 +28,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionTokenCreateService {
 
@@ -50,6 +52,9 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
         final HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(map, httpHeaders);
 
         final RestTemplate restTemplate = new RestTemplate();
+
+        log.info("****assertion:" + map);
+        log.info("****einsteinVisionProperties:" + einsteinVisionProperties);
 
         final ResponseEntity<EinsteinVisionTokenResponseEntity> responseEntity =
                 restTemplate.postForEntity(
