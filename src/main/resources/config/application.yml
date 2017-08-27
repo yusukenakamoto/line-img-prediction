@@ -4,7 +4,7 @@ einsteinVision:
   url: ${EINSTEIN_VISION_URL}
   expiryInSeconds: 720
   tokenUrl: ${EINSTEIN_VISION_URL}v2/oauth2/token
-  predictUtl: ${EINSTEIN_VISION_URL}v2/vision/predict
+  predictUrl: ${EINSTEIN_VISION_URL}v2/vision/predict
 line.bot:
   channel-token: ${LINE_CHANNEL_TOKEN}
   channel-secret: ${LINE_CHANNEL_SECRET}
