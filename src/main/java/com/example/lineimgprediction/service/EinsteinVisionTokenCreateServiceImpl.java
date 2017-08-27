@@ -42,21 +42,21 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
 
 //        final HttpEntity<Form> httpEntity = new HttpEntity<>(form);
 
-        final HttpHeaders httpHeaders = new HttpHeaders();
+        HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        final MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("assertion", createJwtAssertion());
-        map.add("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
+        MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<>();
+        bodyMap.add("assertion", createJwtAssertion());
+        bodyMap.add("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
 
-        final HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(map, httpHeaders);
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(bodyMap, httpHeaders);
 
-        final RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
 
-        log.info("****assertion:" + map);
+        log.info("****assertion:" + bodyMap);
         log.info("****einsteinVisionProperties:" + einsteinVisionProperties);
 
-        final ResponseEntity<String> responseEntity =
+        ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity(
                         einsteinVisionProperties.getTokenUrl(),
                         httpEntity,
@@ -109,6 +109,8 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
         String privateKeyPEM =
                 privateKeyBase64.replace("-----BEGIN RSA PRIVATE KEY-----\n", "")
                                 .replace("\n-----END RSA PRIVATE KEY-----", "");
+
+        log.info("****privateKey:" + privateKeyPEM);
 
         // Base64 decode the data
         byte[] encoded = Base64.decodeBase64(privateKeyPEM);
