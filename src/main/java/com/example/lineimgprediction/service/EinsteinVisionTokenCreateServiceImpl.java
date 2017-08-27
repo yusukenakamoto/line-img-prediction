@@ -56,11 +56,19 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
         log.info("****assertion:" + map);
         log.info("****einsteinVisionProperties:" + einsteinVisionProperties);
 
-        final ResponseEntity<EinsteinVisionTokenResponseEntity> responseEntity =
+        final ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity(
                         einsteinVisionProperties.getTokenUrl(),
                         httpEntity,
-                        EinsteinVisionTokenResponseEntity.class);
+                        String.class);
+
+        log.info("****response:" + responseEntity);
+
+//        inal ResponseEntity<EinsteinVisionTokenResponseEntity> responseEntity =
+//                restTemplate.postForEntity(
+//                        einsteinVisionProperties.getTokenUrl(),
+//                        httpEntity,
+//                        EinsteinVisionTokenResponseEntity.class);
 
 //        final ResponseEntity<EinsteinVisionTokenResponseEntity> responseEntity =
 //                restTemplate.exchange(
@@ -69,7 +77,8 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
 //                    httpEntity,
 //                    EinsteinVisionTokenResponseEntity.class);
 
-        return responseEntity.getBody().getAccessToken();
+//        return responseEntity.getBody().getAccessToken();
+        return "";
     }
 
     private String createJwtAssertion() {
