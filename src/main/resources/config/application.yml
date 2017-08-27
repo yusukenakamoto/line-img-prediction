@@ -1,0 +1,10 @@
+einsteinVision:
+  accountId: ${EINSTEIN_VISION_ACCOUNT_ID}
+  privateKey: ${EINSTEIN_VISION_PRIVATE_KEY}
+  url: ${EINSTEIN_VISION_URL}
+  expiryInSeconds: 720
+  tokenUrl: ${EINSTEIN_VISION_URL}/v2/oauth2/token
+line.bot:
+  channel-token: ${LINE_CHANNEL_TOKEN}
+  channel-secret: ${LINE_CHANNEL_SECRET}
+  handler.path: /callback
