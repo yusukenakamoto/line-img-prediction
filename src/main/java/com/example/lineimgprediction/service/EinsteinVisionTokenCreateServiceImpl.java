@@ -84,8 +84,8 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
     private String createJwtAssertion() {
         final JwtClaims jwtClaims = new JwtClaims();
         jwtClaims.setSubject(einsteinVisionProperties.getAccountId());
-        jwtClaims.setAudience(einsteinVisionProperties.getUrl());
-        jwtClaims.setExpirationTimeMinutesInTheFuture(einsteinVisionProperties.getExpiryInSeconds());
+        jwtClaims.setAudience(einsteinVisionProperties.getTokenUrl());
+        jwtClaims.setExpirationTimeMinutesInTheFuture(einsteinVisionProperties.getExpiryInSeconds() / 60);
         jwtClaims.setIssuedAtToNow();
 
         // generate the payload
@@ -110,8 +110,6 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
                 privateKeyBase64.replace("-----BEGIN RSA PRIVATE KEY-----\n", "")
                                 .replace("\n-----END RSA PRIVATE KEY-----", "");
 
-        log.info("****privateKey:" + privateKeyPEM);
-
         // Base64 decode the data
         byte[] encoded = Base64.decodeBase64(privateKeyPEM);
 
@@ -119,7 +117,8 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
             DerInputStream derReader = new DerInputStream(encoded);
             DerValue[] seq = derReader.getSequence(0);
 
-            BigInteger modules = seq[1].getBigInteger();
+            // skip version seq[0];
+            BigInteger modulus = seq[1].getBigInteger();
             BigInteger publicExp = seq[2].getBigInteger();
             BigInteger privateExp = seq[3].getBigInteger();
             BigInteger primeP = seq[4].getBigInteger();
@@ -130,7 +129,7 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
 
             RSAPrivateCrtKeySpec keySpec =
                     new RSAPrivateCrtKeySpec(
-                            modules,
+                            modulus,
                             publicExp,
                             privateExp,
                             primeP,
