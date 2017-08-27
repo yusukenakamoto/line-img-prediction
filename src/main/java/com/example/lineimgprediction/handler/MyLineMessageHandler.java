@@ -1,6 +1,7 @@
 package com.example.lineimgprediction.handler;
 
 import com.example.lineimgprediction.entity.EinsteinVisionPredictionResponseEntity;
+import com.example.lineimgprediction.entity.EinsteinVisionProbabilityResponseEntity;
 import com.example.lineimgprediction.service.EinsteinVisionPredictionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,15 +68,18 @@ public class MyLineMessageHandler {
         EinsteinVisionPredictionResponseEntity einsteinVisionPredictionResponseEntity =
                 einsteinVisionPredictionService.predictionWithImageBase64String(Base64.encodeBase64String(imageBytes));
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (EinsteinVisionProbabilityResponseEntity probabilityResponseEntity
+                : einsteinVisionPredictionResponseEntity.getProbabilities()) {
+            if (stringBuilder.length() > 0) {
+                stringBuilder.append("¥n");
+            }
+            stringBuilder.append(probabilityResponseEntity.getLabel() + "(" + probabilityResponseEntity.getProbability() + ")");
+        }
 
         List<Message> messageList = new ArrayList<>();
-        try {
-            messageList.add(new TextMessage(
-                    objectMapper.writeValueAsString(einsteinVisionPredictionResponseEntity.getProbabilities())));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        messageList.add(new TextMessage(stringBuilder.toString()));
 
         lineMessagingClient.replyMessage(new ReplyMessage(replyToken, messageList));
     }

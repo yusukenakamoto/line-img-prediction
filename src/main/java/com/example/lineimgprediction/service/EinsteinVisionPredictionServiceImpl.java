@@ -1,6 +1,5 @@
 package com.example.lineimgprediction.service;
 
-import com.example.lineimgprediction.entity.EinsteinVisionImageBase64RequestEntity;
 import com.example.lineimgprediction.entity.EinsteinVisionPredictionResponseEntity;
 import com.example.lineimgprediction.properties.EinsteinVisionProperties;
 import lombok.extern.slf4j.Slf4j;
