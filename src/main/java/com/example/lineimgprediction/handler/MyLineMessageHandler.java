@@ -77,8 +77,6 @@ public class MyLineMessageHandler {
             e.printStackTrace();
         }
 
-        log.info("****replyToken:" + replyToken);
-
         lineMessagingClient.replyMessage(new ReplyMessage(replyToken, messageList));
     }
 }

@@ -29,22 +29,22 @@ public class EinsteinVisionPredictionServiceImpl implements EinsteinVisionPredic
         httpHeaders.set("Cache-Control", "no-cache");
         httpHeaders.set("Authorization", "Bearer " + accessToken);
 
-        final MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        parts.add("modelId", einsteinVisionProperties.getModelId());
-        parts.add("sampleBase64Content", imageBase64String);
-        parts.add("numResults", 3);
+//        final MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+//        parts.add("modelId", einsteinVisionProperties.getModelId());
+//        parts.add("sampleBase64Content", imageBase64String);
+//        parts.add("numResults", 3);
+//
+//        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(parts, httpHeaders);
 
-        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(parts, httpHeaders);
+        final EinsteinVisionImageBase64RequestEntity einsteinVisionImageBase64RequestEntity =
+                new EinsteinVisionImageBase64RequestEntity();
+        einsteinVisionImageBase64RequestEntity.setModelId(einsteinVisionProperties.getModelId());
+        einsteinVisionImageBase64RequestEntity.setNumResults(3);
+        einsteinVisionImageBase64RequestEntity.setSampleBase64Content(imageBase64String);
+        einsteinVisionImageBase64RequestEntity.setSampleId("Image Prediction");
 
-//        final EinsteinVisionImageBase64RequestEntity einsteinVisionImageBase64RequestEntity =
-//                new EinsteinVisionImageBase64RequestEntity();
-//        einsteinVisionImageBase64RequestEntity.setModelId("GeneralImageClassifier");
-//        einsteinVisionImageBase64RequestEntity.setNumResults(3);
-//        einsteinVisionImageBase64RequestEntity.setSampleBase64Content(imageBase64String);
-//        einsteinVisionImageBase64RequestEntity.setSampleId("Image Prediction");
-
-//        HttpEntity<EinsteinVisionImageBase64RequestEntity> httpEntity =
-//                new HttpEntity<>(einsteinVisionImageBase64RequestEntity, httpHeaders);
+        HttpEntity<EinsteinVisionImageBase64RequestEntity> httpEntity =
+                new HttpEntity<>(einsteinVisionImageBase64RequestEntity, httpHeaders);
 
         RestTemplate restTemplate = new RestTemplate();
 
