@@ -1,5 +1,6 @@
 package com.example.lineimgprediction.service;
 
+import com.example.lineimgprediction.entity.EinsteinVisionPredictionResponseEntity;
 import com.example.lineimgprediction.entity.EinsteinVisionTokenResponseEntity;
 import com.example.lineimgprediction.properties.EinsteinVisionProperties;
 import org.apache.commons.codec.binary.Base64;
@@ -8,10 +9,10 @@ import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerValue;
@@ -33,20 +34,35 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
     private EinsteinVisionProperties einsteinVisionProperties;
 
     public String getAccessToken() {
-        final Form form = new Form();
-        form.param("assertion", createJwtAssertion());
-        form.param("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
+//        final Form form = new Form();
+//        form.param("assertion", createJwtAssertion());
+//        form.param("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
 
-        final HttpEntity<Form> httpEntity = new HttpEntity<>(form);
+//        final HttpEntity<Form> httpEntity = new HttpEntity<>(form);
 
-        RestTemplate restTemplate = new RestTemplate();
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        final MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("assertion", createJwtAssertion());
+        map.add("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
+
+        final HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(map, httpHeaders);
+
+        final RestTemplate restTemplate = new RestTemplate();
 
         final ResponseEntity<EinsteinVisionTokenResponseEntity> responseEntity =
-                restTemplate.exchange(
-                    einsteinVisionProperties.getTokenUrl(),
-                    HttpMethod.POST,
-                    httpEntity,
-                    EinsteinVisionTokenResponseEntity.class);
+                restTemplate.postForEntity(
+                        einsteinVisionProperties.getTokenUrl(),
+                        httpEntity,
+                        EinsteinVisionTokenResponseEntity.class);
+
+//        final ResponseEntity<EinsteinVisionTokenResponseEntity> responseEntity =
+//                restTemplate.exchange(
+//                    einsteinVisionProperties.getTokenUrl(),
+//                    HttpMethod.POST,
+//                    httpEntity,
+//                    EinsteinVisionTokenResponseEntity.class);
 
         return responseEntity.getBody().getAccessToken();
     }
