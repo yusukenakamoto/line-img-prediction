@@ -4,9 +4,7 @@ import com.example.lineimgprediction.entity.EinsteinVisionImageBase64RequestEnti
 import com.example.lineimgprediction.entity.EinsteinVisionPredictionResponseEntity;
 import com.example.lineimgprediction.properties.EinsteinVisionProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,6 +20,11 @@ public class EinsteinVisionPredictionServiceImpl implements EinsteinVisionPredic
     public EinsteinVisionPredictionResponseEntity predictionWithImageBase64String(final String imageBase64String) {
         final String accessToken = einsteinVisionTokenCreateService.getAccessToken();
 
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+        httpHeaders.set("Cache-Control", "no-cache");
+        httpHeaders.set("Authorization", "Bearer " + accessToken);
+
         final EinsteinVisionImageBase64RequestEntity einsteinVisionImageBase64RequestEntity =
                 new EinsteinVisionImageBase64RequestEntity();
         einsteinVisionImageBase64RequestEntity.setModelId("GeneralImageClassifier");
@@ -30,7 +33,7 @@ public class EinsteinVisionPredictionServiceImpl implements EinsteinVisionPredic
         einsteinVisionImageBase64RequestEntity.setSampleId("Image Prediction");
 
         HttpEntity<EinsteinVisionImageBase64RequestEntity> httpEntity =
-                new HttpEntity<>(einsteinVisionImageBase64RequestEntity);
+                new HttpEntity<>(einsteinVisionImageBase64RequestEntity, httpHeaders);
 
         RestTemplate restTemplate = new RestTemplate();
 
