@@ -14,4 +14,5 @@ public class EinsteinVisionProperties {
     private float expiryInSeconds;
     private String tokenUrl;
     private String predictUrl;
+    private String modelId;
 }
