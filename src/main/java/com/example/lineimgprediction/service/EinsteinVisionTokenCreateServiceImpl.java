@@ -18,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerValue;
 
-import javax.ws.rs.core.Form;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyFactory;
@@ -36,49 +35,24 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
     private EinsteinVisionProperties einsteinVisionProperties;
 
     public String getAccessToken() {
-//        final Form form = new Form();
-//        form.param("assertion", createJwtAssertion());
-//        form.param("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
-
-//        final HttpEntity<Form> httpEntity = new HttpEntity<>(form);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
+        final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<>();
+        final MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<>();
         bodyMap.add("assertion", createJwtAssertion());
         bodyMap.add("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
 
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(bodyMap, httpHeaders);
+        final HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(bodyMap, httpHeaders);
 
         RestTemplate restTemplate = new RestTemplate();
 
-        log.info("****assertion:" + bodyMap);
-        log.info("****einsteinVisionProperties:" + einsteinVisionProperties);
-
-        ResponseEntity<String> responseEntity =
+        final ResponseEntity<EinsteinVisionTokenResponseEntity> responseEntity =
                 restTemplate.postForEntity(
                         einsteinVisionProperties.getTokenUrl(),
                         httpEntity,
-                        String.class);
+                        EinsteinVisionTokenResponseEntity.class);
 
-        log.info("****response:" + responseEntity);
-
-//        inal ResponseEntity<EinsteinVisionTokenResponseEntity> responseEntity =
-//                restTemplate.postForEntity(
-//                        einsteinVisionProperties.getTokenUrl(),
-//                        httpEntity,
-//                        EinsteinVisionTokenResponseEntity.class);
-
-//        final ResponseEntity<EinsteinVisionTokenResponseEntity> responseEntity =
-//                restTemplate.exchange(
-//                    einsteinVisionProperties.getTokenUrl(),
-//                    HttpMethod.POST,
-//                    httpEntity,
-//                    EinsteinVisionTokenResponseEntity.class);
-
-//        return responseEntity.getBody().getAccessToken();
-        return "";
+        return responseEntity.getBody().getAccessToken();
     }
 
     private String createJwtAssertion() {
