@@ -2,6 +2,8 @@ package com.example.lineimgprediction.handler;
 
 import com.example.lineimgprediction.entity.EinsteinVisionPredictionResponseEntity;
 import com.example.lineimgprediction.service.EinsteinVisionPredictionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.MessageContentResponse;
 import com.linecorp.bot.model.ReplyMessage;
@@ -11,6 +13,7 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+@Slf4j
 @LineMessageHandler
 public class MyLineMessageHandler {
 
@@ -62,8 +66,19 @@ public class MyLineMessageHandler {
 
         EinsteinVisionPredictionResponseEntity einsteinVisionPredictionResponseEntity =
                 einsteinVisionPredictionService.predictionWithImageBase64String(Base64.encodeBase64String(imageBytes));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
         List<Message> messageList = new ArrayList<>();
-        messageList.add(new TextMessage(einsteinVisionPredictionResponseEntity.getMessage()));
+        try {
+            messageList.add(new TextMessage(
+                    objectMapper.writeValueAsString(einsteinVisionPredictionResponseEntity.getProbabilities())));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        log.info("****replyToken:" + replyToken);
+
         lineMessagingClient.replyMessage(new ReplyMessage(replyToken, messageList));
     }
 }
