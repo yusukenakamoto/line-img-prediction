@@ -29,33 +29,20 @@ public class EinsteinVisionPredictionServiceImpl implements EinsteinVisionPredic
         httpHeaders.set("Cache-Control", "no-cache");
         httpHeaders.set("Authorization", "Bearer " + accessToken);
 
-//        final MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-//        parts.add("modelId", einsteinVisionProperties.getModelId());
-//        parts.add("sampleBase64Content", imageBase64String);
-//        parts.add("numResults", 3);
-//
-//        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(parts, httpHeaders);
+        final MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("modelId", einsteinVisionProperties.getModelId());
+        parts.add("sampleBase64Content", imageBase64String);
+        parts.add("numResults", 3);
 
-        final EinsteinVisionImageBase64RequestEntity einsteinVisionImageBase64RequestEntity =
-                new EinsteinVisionImageBase64RequestEntity();
-        einsteinVisionImageBase64RequestEntity.setModelId(einsteinVisionProperties.getModelId());
-        einsteinVisionImageBase64RequestEntity.setNumResults(3);
-        einsteinVisionImageBase64RequestEntity.setSampleBase64Content(imageBase64String);
-        einsteinVisionImageBase64RequestEntity.setSampleId("Image Prediction");
-
-        HttpEntity<EinsteinVisionImageBase64RequestEntity> httpEntity =
-                new HttpEntity<>(einsteinVisionImageBase64RequestEntity, httpHeaders);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(parts, httpHeaders);
 
         RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<EinsteinVisionPredictionResponseEntity> responseEntity =
-                restTemplate.exchange(
+                restTemplate.postForEntity(
                         einsteinVisionProperties.getPredictUrl(),
-                        HttpMethod.POST,
                         httpEntity,
                         EinsteinVisionPredictionResponseEntity.class);
-
-        log.info("****Predict Response:" + responseEntity);
 
         return responseEntity.getBody();
     }
