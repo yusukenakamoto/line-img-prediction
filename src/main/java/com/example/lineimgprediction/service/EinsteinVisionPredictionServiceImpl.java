@@ -6,6 +6,8 @@ import com.example.lineimgprediction.properties.EinsteinVisionProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -25,21 +27,28 @@ public class EinsteinVisionPredictionServiceImpl implements EinsteinVisionPredic
         httpHeaders.set("Cache-Control", "no-cache");
         httpHeaders.set("Authorization", "Bearer " + accessToken);
 
-        final EinsteinVisionImageBase64RequestEntity einsteinVisionImageBase64RequestEntity =
-                new EinsteinVisionImageBase64RequestEntity();
-        einsteinVisionImageBase64RequestEntity.setModelId("GeneralImageClassifier");
-        einsteinVisionImageBase64RequestEntity.setNumResults(3);
-        einsteinVisionImageBase64RequestEntity.setSampleBase64Content(imageBase64String);
-        einsteinVisionImageBase64RequestEntity.setSampleId("Image Prediction");
+        final MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("modelId", "GeneralImageClassifier");
+        parts.add("sampleBase64Content", imageBase64String);
+        parts.add("numResults", 3);
 
-        HttpEntity<EinsteinVisionImageBase64RequestEntity> httpEntity =
-                new HttpEntity<>(einsteinVisionImageBase64RequestEntity, httpHeaders);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(parts, httpHeaders);
+
+//        final EinsteinVisionImageBase64RequestEntity einsteinVisionImageBase64RequestEntity =
+//                new EinsteinVisionImageBase64RequestEntity();
+//        einsteinVisionImageBase64RequestEntity.setModelId("GeneralImageClassifier");
+//        einsteinVisionImageBase64RequestEntity.setNumResults(3);
+//        einsteinVisionImageBase64RequestEntity.setSampleBase64Content(imageBase64String);
+//        einsteinVisionImageBase64RequestEntity.setSampleId("Image Prediction");
+
+//        HttpEntity<EinsteinVisionImageBase64RequestEntity> httpEntity =
+//                new HttpEntity<>(einsteinVisionImageBase64RequestEntity, httpHeaders);
 
         RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<EinsteinVisionPredictionResponseEntity> responseEntity =
                 restTemplate.exchange(
-                        einsteinVisionProperties.getUrl(),
+                        einsteinVisionProperties.getPredictUrl(),
                         HttpMethod.POST,
                         httpEntity,
                         EinsteinVisionPredictionResponseEntity.class);
