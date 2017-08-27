@@ -34,6 +34,8 @@ public class EinsteinVisionPredictionServiceImpl implements EinsteinVisionPredic
         parts.add("sampleBase64Content", imageBase64String);
         parts.add("numResults", 3);
 
+        log.info("****parts:" + parts);
+
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(parts, httpHeaders);
 
 //        final EinsteinVisionImageBase64RequestEntity einsteinVisionImageBase64RequestEntity =
