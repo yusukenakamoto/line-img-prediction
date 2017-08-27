@@ -3,6 +3,7 @@ package com.example.lineimgprediction.service;
 import com.example.lineimgprediction.entity.EinsteinVisionImageBase64RequestEntity;
 import com.example.lineimgprediction.entity.EinsteinVisionPredictionResponseEntity;
 import com.example.lineimgprediction.properties.EinsteinVisionProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 public class EinsteinVisionPredictionServiceImpl implements EinsteinVisionPredictionService {
 
@@ -52,6 +54,8 @@ public class EinsteinVisionPredictionServiceImpl implements EinsteinVisionPredic
                         HttpMethod.POST,
                         httpEntity,
                         EinsteinVisionPredictionResponseEntity.class);
+
+        log.info("****Predict Response:" + responseEntity);
 
         return responseEntity.getBody();
     }
