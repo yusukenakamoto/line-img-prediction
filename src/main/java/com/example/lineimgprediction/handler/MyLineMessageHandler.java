@@ -73,7 +73,7 @@ public class MyLineMessageHandler {
         for (EinsteinVisionProbabilityResponseEntity probabilityResponseEntity
                 : einsteinVisionPredictionResponseEntity.getProbabilities()) {
             if (stringBuilder.length() > 0) {
-                stringBuilder.append("¥n");
+                stringBuilder.append("¥¥n");
             }
             stringBuilder.append(probabilityResponseEntity.getLabel() + "(" + probabilityResponseEntity.getProbability() + ")");
         }
