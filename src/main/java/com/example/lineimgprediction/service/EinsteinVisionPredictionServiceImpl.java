@@ -30,7 +30,7 @@ public class EinsteinVisionPredictionServiceImpl implements EinsteinVisionPredic
         httpHeaders.set("Authorization", "Bearer " + accessToken);
 
         final MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        parts.add("modelId", "GeneralImageClassifier");
+        parts.add("modelId", "FoodImageClassifier");
         parts.add("sampleBase64Content", imageBase64String);
         parts.add("numResults", 3);
 
