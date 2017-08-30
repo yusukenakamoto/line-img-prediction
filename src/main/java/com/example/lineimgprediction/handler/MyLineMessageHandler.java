@@ -15,6 +15,7 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -80,15 +81,15 @@ public class MyLineMessageHandler {
         // InputStreamからBase64に変換する
         InputStream responseInputStream = messageContentResponse.getStream();
 //        byte[] imageBytes = new byte[(int) messageContentResponse.getLength()];
-        log.info("***** imageBytes(" + (int) messageContentResponse.getLength() + "*****");
-        byte[] imageBytes = new byte[1024];
+//        log.info("***** imageBytes(" + (int) messageContentResponse.getLength() + "*****");
+//        byte[] imageBytes = new byte[1024];
 
-        try {
-            responseInputStream.read(imageBytes, 0, imageBytes.length);
-            responseInputStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            responseInputStream.read(imageBytes, 0, imageBytes.length);
+//            responseInputStream.close();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
         // Einstein Visionのアクセストークンを取得する
         log.info("***** Get Access Token *****");
@@ -96,10 +97,17 @@ public class MyLineMessageHandler {
 
         // Einstein Visionで画像認識を行う
         log.info("***** Prediction with Image *****");
-        EinsteinVisionPredictionResponseEntity einsteinVisionPredictionResponseEntity =
+        EinsteinVisionPredictionResponseEntity einsteinVisionPredictionResponseEntity = null;
+
+        try {
+             einsteinVisionPredictionResponseEntity =
                 einsteinVisionPredictionService.predictionWithImageBase64String(
-                        Base64.encodeBase64String(imageBytes),
+//                        Base64.encodeBase64String(imageBytes),
+                        Base64.encodeBase64String(IOUtils.toByteArray(responseInputStream)),
                         accessToken);
+        } catch (IOException e) {
+            new RuntimeException(e);
+        }
 
         // 結果をパースする
         StringBuilder stringBuilder = new StringBuilder();
