@@ -78,18 +78,7 @@ public class MyLineMessageHandler {
      * @param replyToken リプライトークン
      */
     private void replyMessage(MessageContentResponse messageContentResponse, String replyToken) {
-        // InputStreamからBase64に変換する
         InputStream responseInputStream = messageContentResponse.getStream();
-//        byte[] imageBytes = new byte[(int) messageContentResponse.getLength()];
-//        log.info("***** imageBytes(" + (int) messageContentResponse.getLength() + "*****");
-//        byte[] imageBytes = new byte[1024];
-
-//        try {
-//            responseInputStream.read(imageBytes, 0, imageBytes.length);
-//            responseInputStream.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
 
         // Einstein Visionのアクセストークンを取得する
         log.info("***** Get Access Token *****");
@@ -98,11 +87,9 @@ public class MyLineMessageHandler {
         // Einstein Visionで画像認識を行う
         log.info("***** Prediction with Image *****");
         EinsteinVisionPredictionResponseEntity einsteinVisionPredictionResponseEntity = null;
-
         try {
              einsteinVisionPredictionResponseEntity =
                 einsteinVisionPredictionService.predictionWithImageBase64String(
-//                        Base64.encodeBase64String(imageBytes),
                         Base64.encodeBase64String(IOUtils.toByteArray(responseInputStream)),
                         accessToken);
         } catch (IOException e) {
