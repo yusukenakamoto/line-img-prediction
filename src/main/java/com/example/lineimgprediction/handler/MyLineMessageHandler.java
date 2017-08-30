@@ -80,6 +80,7 @@ public class MyLineMessageHandler {
         // InputStreamからBase64に変換する
         InputStream responseInputStream = messageContentResponse.getStream();
 //        byte[] imageBytes = new byte[(int) messageContentResponse.getLength()];
+        log.info("***** imageBytes(" + (int) messageContentResponse.getLength() + "*****");
         byte[] imageBytes = new byte[1024];
 
         try {
