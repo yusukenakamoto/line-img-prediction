@@ -79,7 +79,8 @@ public class MyLineMessageHandler {
     private void replyMessage(MessageContentResponse messageContentResponse, String replyToken) {
         // InputStreamからBase64に変換する
         InputStream responseInputStream = messageContentResponse.getStream();
-        byte[] imageBytes = new byte[(int) messageContentResponse.getLength()];
+//        byte[] imageBytes = new byte[(int) messageContentResponse.getLength()];
+        byte[] imageBytes = new byte[1024];
 
         try {
             responseInputStream.read(imageBytes, 0, imageBytes.length);
