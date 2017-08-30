@@ -3,6 +3,7 @@ package com.example.lineimgprediction.handler;
 import com.example.lineimgprediction.entity.EinsteinVisionPredictionResponseEntity;
 import com.example.lineimgprediction.entity.EinsteinVisionProbabilityResponseEntity;
 import com.example.lineimgprediction.service.EinsteinVisionPredictionService;
+import com.example.lineimgprediction.service.EinsteinVisionTokenService;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.MessageContentResponse;
 import com.linecorp.bot.model.ReplyMessage;
@@ -29,6 +30,9 @@ import java.util.function.Consumer;
 @Slf4j
 @LineMessageHandler
 public class MyLineMessageHandler {
+
+    @Autowired
+    private EinsteinVisionTokenService einsteinVisionTokenService;
 
     @Autowired
     private EinsteinVisionPredictionService einsteinVisionPredictionService;
@@ -84,10 +88,16 @@ public class MyLineMessageHandler {
             throw new RuntimeException(e);
         }
 
+        // Einstein Visionのアクセストークンを取得する
+        log.info("***** Get Access Token *****");
+        final String accessToken = einsteinVisionTokenService.getAccessToken();
+
         // Einstein Visionで画像認識を行う
         log.info("***** Prediction with Image *****");
         EinsteinVisionPredictionResponseEntity einsteinVisionPredictionResponseEntity =
-                einsteinVisionPredictionService.predictionWithImageBase64String(Base64.encodeBase64String(imageBytes));
+                einsteinVisionPredictionService.predictionWithImageBase64String(
+                        Base64.encodeBase64String(imageBytes),
+                        accessToken);
 
         // 結果をパースする
         StringBuilder stringBuilder = new StringBuilder();

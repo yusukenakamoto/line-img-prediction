@@ -6,5 +6,6 @@ import com.example.lineimgprediction.entity.EinsteinVisionPredictionResponseEnti
  * Einstein Visionで画像認識を行うクラスのインタフェース.
  */
 public interface EinsteinVisionPredictionService {
-    public EinsteinVisionPredictionResponseEntity predictionWithImageBase64String(final String imageBase64String);
+    public EinsteinVisionPredictionResponseEntity predictionWithImageBase64String(final String imageBase64String,
+                                                                                  final String accessToken);
 }

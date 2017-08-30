@@ -18,18 +18,14 @@ public class EinsteinVisionPredictionServiceImpl implements EinsteinVisionPredic
     @Autowired
     private EinsteinVisionProperties einsteinVisionProperties;
 
-    @Autowired
-    private EinsteinVisionTokenService einsteinVisionTokenCreateService;
-
     /**
      * Base64の画像情報をEinstein Visionで認識する.
      * @param imageBase64String Base64の画像情報
+     * @param accessToken アクセストークン
      * @return 認識結果
      */
-    public EinsteinVisionPredictionResponseEntity predictionWithImageBase64String(final String imageBase64String) {
-        // アクセストークンを取得する
-        final String accessToken = einsteinVisionTokenCreateService.getAccessToken();
-
+    public EinsteinVisionPredictionResponseEntity predictionWithImageBase64String(final String imageBase64String,
+                                                                                  final String accessToken) {
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
         httpHeaders.set("Cache-Control", "no-cache");
