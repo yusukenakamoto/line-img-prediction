@@ -2,7 +2,6 @@ package com.example.lineimgprediction.service;
 
 import com.example.lineimgprediction.entity.EinsteinVisionTokenResponseEntity;
 import com.example.lineimgprediction.properties.EinsteinVisionProperties;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
@@ -26,13 +25,19 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.util.UUID;
 
-@Slf4j
+/**
+ * Einstein Visionのアクセストークンを取得する実装クラス.
+ */
 @Service
-public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionTokenCreateService {
+public class EinsteinVisionTokenServiceImpl implements EinsteinVisionTokenService {
 
     @Autowired
     private EinsteinVisionProperties einsteinVisionProperties;
 
+    /**
+     * アクセストークンを取得する.
+     * @return アクセストークン
+     */
     public String getAccessToken() {
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -54,6 +59,10 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
         return responseEntity.getBody().getAccessToken();
     }
 
+    /**
+     * JWTアサーションを作成する.
+     * @return JWTアサーション
+     */
     private String createJwtAssertion() {
         final JwtClaims jwtClaims = new JwtClaims();
         jwtClaims.setSubject(einsteinVisionProperties.getAccountId());
@@ -77,6 +86,10 @@ public class EinsteinVisionTokenCreateServiceImpl implements EinsteinVisionToken
         }
     }
 
+    /**
+     * プライベートキーを作成する.
+     * @return プライベートキー
+     */
     private PrivateKey createPrivateKey() {
         final String privateKeyBase64 = einsteinVisionProperties.getPrivateKey();
         String privateKeyPEM =

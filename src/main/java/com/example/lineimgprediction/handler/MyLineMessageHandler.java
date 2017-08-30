@@ -3,8 +3,6 @@ package com.example.lineimgprediction.handler;
 import com.example.lineimgprediction.entity.EinsteinVisionPredictionResponseEntity;
 import com.example.lineimgprediction.entity.EinsteinVisionProbabilityResponseEntity;
 import com.example.lineimgprediction.service.EinsteinVisionPredictionService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.MessageContentResponse;
 import com.linecorp.bot.model.ReplyMessage;
@@ -25,6 +23,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+/**
+ * LINEメッセージイベントのハンドラークラス.
+ */
 @Slf4j
 @LineMessageHandler
 public class MyLineMessageHandler {
@@ -35,17 +36,29 @@ public class MyLineMessageHandler {
     @Autowired
     private LineMessagingClient lineMessagingClient;
 
+    /**
+     * イメージメッセージイベントをハンドリングする.
+     * @param event イメージメッセージイベント
+     */
     @EventMapping
-    public void hangleImageMessageEvent(MessageEvent<ImageMessageContent> event) {
+    public void handleImageMessageEvent(MessageEvent<ImageMessageContent> event) {
+        log.info("***** Image Message Event *****");
         handleContent(
                 event.getMessage().getId(),
                 messageContentResponse -> replyMessage(messageContentResponse, event.getReplyToken()));
     }
 
+    /**
+     * メッセージコンテンツを取得する.
+     * @param messageId メッセージID
+     * @param messageConsumer メッセージコンシューマ
+     */
     private void handleContent(String messageId, Consumer<MessageContentResponse> messageConsumer) {
         final MessageContentResponse messageContentResponse;
 
         try {
+            // LINEからメッセージコンテンツを取得する
+            log.info("***** Get Message Content *****");
             messageContentResponse = lineMessagingClient.getMessageContent(messageId).get();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
@@ -54,7 +67,13 @@ public class MyLineMessageHandler {
         messageConsumer.accept(messageContentResponse);
     }
 
+    /**
+     * 画像を認識し、メッセージを返信する.
+     * @param messageContentResponse メッセージコンテンツ取得結果
+     * @param replyToken リプライトークン
+     */
     private void replyMessage(MessageContentResponse messageContentResponse, String replyToken) {
+        // InputStreamからBase64に変換する
         InputStream responseInputStream = messageContentResponse.getStream();
         byte[] imageBytes = new byte[(int) messageContentResponse.getLength()];
 
@@ -65,11 +84,13 @@ public class MyLineMessageHandler {
             throw new RuntimeException(e);
         }
 
+        // Einstein Visionで画像認識を行う
+        log.info("***** Prediction with Image *****");
         EinsteinVisionPredictionResponseEntity einsteinVisionPredictionResponseEntity =
                 einsteinVisionPredictionService.predictionWithImageBase64String(Base64.encodeBase64String(imageBytes));
 
+        // 結果をパースする
         StringBuilder stringBuilder = new StringBuilder();
-
         for (EinsteinVisionProbabilityResponseEntity probabilityResponseEntity
                 : einsteinVisionPredictionResponseEntity.getProbabilities()) {
             if (stringBuilder.length() > 0) {
@@ -81,6 +102,8 @@ public class MyLineMessageHandler {
         List<Message> messageList = new ArrayList<>();
         messageList.add(new TextMessage(stringBuilder.toString()));
 
+        // LINEに返信する
+        log.info("***** Reply Message *****");
         lineMessagingClient.replyMessage(new ReplyMessage(replyToken, messageList));
     }
 }
